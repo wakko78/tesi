@@ -21,6 +21,9 @@ def analyze_pcap(filename):
     src_ips = Counter()
     dst_ips = Counter()
     
+    # Statistiche Lunghezza Pacchetti
+    pkt_lens = []
+    
     try:
         # Usa PcapReader per leggere il file pacchetto per pacchetto (streaming)
         with PcapReader(filename) as pcap_reader:
@@ -30,6 +33,10 @@ def analyze_pcap(filename):
                 # Feedback visuale ogni 1000 pacchetti
                 if total_packets % 1000 == 0:
                     print(f"\rProcessati {total_packets} pacchetti...", end="", flush=True)
+
+                # Statistiche lunghezza
+                pkt_len = len(pkt)
+                pkt_lens.append(pkt_len)
 
                 # Conteggio protocolli livello trasporto/rete
                 if pkt.haslayer(TCP):
@@ -60,6 +67,17 @@ def analyze_pcap(filename):
     print(f"\n\nAnalisi completata. Totale pacchetti: {total_packets}")
 
     if total_packets > 0:
+        # Calcolo statistiche lunghezza
+        min_len = min(pkt_lens)
+        max_len = max(pkt_lens)
+        avg_len = sum(pkt_lens) / len(pkt_lens)
+
+        print(f"\n--- Statistiche Lunghezza Pacchetti ---")
+        print(f"Conteggio: {total_packets}")
+        print(f"Media: {avg_len:.2f} bytes")
+        print(f"Min: {min_len} bytes")
+        print(f"Max: {max_len} bytes")
+
         print("\n--- Distribuzione Protocolli ---")
         for proto, count in protocols.most_common():
             print(f"{proto}: {count} ({count/total_packets*100:.1f}%)")
