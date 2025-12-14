@@ -3,7 +3,7 @@
 #user:postgres
 #password:postgres
 #db:tesi
-
+#test2
 from sqlalchemy import create_engine
 try:
     # Crea la stringa di connessione per SQLAlchemy
